@@ -1,0 +1,363 @@
+<!doctype html> 
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Buscador de la Biblioteca U.D.C.A.</title>
+<style>
+body {
+background-image: url('library.jpg');
+background-repeat: no-repeat;
+background-size: cover;
+background-position: center center;
+background-attachment: fixed;
+}
+/* ===== Estilos encapsulados: no altera estilos globales ===== */
+.udca-search, .udca-search * { box-sizing: border-box; }
+.udca-search {
+  --udca-orange:#ff762d; --udca-ink:#063449; --udca-green:#07894d;
+  --udca-text:#fff; width:min(1200px,calc(100% - 32px)); margin:28px auto;
+  color:var(--udca-text); font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+.udca-search .udca-shell {
+  padding:clamp(18px,3.4vw,26px) clamp(18px,3.6vw,46px) 25px;
+  border-radius:22px; background:rgba(0,0,0,.5);
+  border:1px solid rgba(255,255,255,.18);
+}
+.udca-search .udca-tabs {
+  display:flex; align-items:stretch; flex-wrap:wrap; gap:10px;
+  margin:0 0 5px; padding:0; border:0;
+}
+.udca-search .udca-tab {
+  display:inline-flex; align-items:center; justify-content:flex-start; gap:8px;
+  min-height:40px; padding:7px 13px 7px 8px; border:2px solid #333333;
+  border-radius:12px; background:#353535; color:#fff;
+  font:400 15px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; cursor:pointer;
+}
+.udca-search .udca-tab[aria-selected="true"] {
+  color:#333; background:#fff; border-color:#073448;
+}
+.udca-search .udca-tab:focus-visible, .udca-search button:focus-visible,
+.udca-search input:focus-visible { outline:3px solid #ffd66b; outline-offset:3px; }
+.udca-search .udca-icon {
+  display:inline-flex; flex:0 0 31px; width:31px; height:31px; align-items:center;
+  justify-content:center; overflow:hidden; border-radius:50%;
+  background:linear-gradient(180deg,#086234 0%,#19a765 100%);
+}
+.udca-search .udca-icon img { display:block; width:70%; height:70%; object-fit:contain; }
+.udca-search .udca-icon svg { width:20px; height:20px; stroke:#fff; stroke-width:1.7; fill:none; }
+.udca-search .udca-tab:nth-child(3) .udca-icon { background:linear-gradient(180deg,#ed4b14,#ff8a36); }
+.udca-search .udca-tab:nth-child(7) .udca-icon { background:linear-gradient(180deg,#AA4511,#88B54B); }
+.udca-search .udca-searchbar {
+  display:flex; align-items:center; gap:12px; min-height:56px; padding:5px 12px 5px 6px;
+  border-radius:24px; background:#fff; color:#555;
+  border:1px solid #e5e5e5; box-shadow:0 3px 2px rgba(0,0,0,.42);
+}
+.udca-search .udca-searchmark {
+  display:flex; flex:0 0 40px; width:40px; height:40px; align-items:center; justify-content:center;
+  background:var(--udca-orange); border-radius:10px;
+}
+.udca-search .udca-searchmark svg { width:24px; height:24px; fill:none; stroke:white; stroke-width:1.8; }
+.udca-search .udca-query {
+  display:block; flex:1 1 auto; min-width:0; width:100%; height:42px; padding:8px 7px;
+  border:0; border-radius:0; background:transparent; color:#202a30; font:400 18px/1.3 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  outline-offset:0;
+}
+.udca-search .udca-query::placeholder { color:#aaa; opacity:1; }
+.udca-search .udca-submit {
+  flex:0 0 auto; min-height:34px; padding:7px 12px; border:0; border-radius:8px;
+  color:#fff; background:var(--udca-orange); font:400 16px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; cursor:pointer;
+}
+.udca-search .udca-submit:hover { background:#ed5f19; }
+.udca-search .udca-options {
+  display:flex; align-items:center; flex-wrap:wrap; gap:12px 18px; margin:12px 2px 0 72px;
+}
+.udca-search .udca-radios { display:flex; flex-wrap:wrap; align-items:center; gap:10px 22px; padding:0; margin:0; border:0; }
+.udca-search .udca-radios legend { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
+.udca-search .udca-radio { display:inline-flex; align-items:center; gap:5px; color:#fff; font-size:14px; cursor:pointer; white-space:nowrap; }
+.udca-search .udca-radio input { appearance:none; width:21px; height:21px; margin:0; border:2px solid #073448; border-radius:50%; background:#fff; cursor:pointer; }
+.udca-search .udca-radio input:checked { background:#ffffff; box-shadow:inset 0 0 0 3px #FA712A, inset 0 0 0 5px #050; }
+.udca-search .udca-advanced {
+  margin-left:auto; padding:5px 14px; border:0; border-radius:5px; color:#fff;
+  background:var(--udca-orange); font:400 14px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; cursor:pointer;
+}
+.udca-search .udca-airow { display:flex; align-items:center; gap:11px; margin:12px 0 0 70px; color:#fff; font-size:14px; }
+.udca-search .udca-switch { position:relative; display:inline-block; width:47px; height:25px; flex:0 0 47px; }
+.udca-search .udca-switch input { position:absolute; opacity:0; width:1px; height:1px; }
+.udca-search .udca-switchtrack { position:absolute; inset:0; border-radius:20px; background:#fff; cursor:pointer; }
+.udca-search .udca-switchtrack:before { content:""; position:absolute; top:3px; left:3px; width:19px; height:19px; border-radius:50%; background:#8ed047; transition:transform .18s,background .18s; }
+.udca-search .udca-switch input:checked + .udca-switchtrack:before { transform:translateX(22px); background:#07894d; }
+.udca-search .udca-switch input:focus-visible + .udca-switchtrack { outline:3px solid #ffd66b; outline-offset:3px; }
+.udca-search .udca-panelbody[hidden] { display:none; }
+.udca-search .udca-panelbody { min-width:0; }
+.udca-search .udca-status { margin:10px 0 0 72px; font-size:12px; line-height:1.4; color:#f3f3f3; }
+.udca-search .udca-direct { color:#fff; padding:6px 0 0; }
+.udca-search .udca-direct h2 { margin:0 0 8px; font-size:20px; }
+.udca-search .udca-direct p { margin:0 0 12px; }
+@media (max-width:950px) {
+  .udca-search .udca-tabs { gap:7px; }
+  .udca-search .udca-tab { min-height:40px; padding-right:5px; font-size:12px; }
+  .udca-search .udca-options { margin-left:0; }
+  .udca-search .udca-airow { margin-left:0; }
+  .udca-search .udca-status { margin-left:0; }
+}
+@media (max-width:600px) {
+  .udca-search { width:calc(100% - 18px); margin:12px auto; }
+  .udca-search .udca-shell { padding:14px 12px 22px; border-radius:16px; }
+  .udca-search .udca-tabs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px; margin-bottom:10px; }
+  .udca-search .udca-tab { min-width:0; width:100%; min-height:45px; padding:6px; gap:6px; font-size:13px; border-radius:9px; }
+  .udca-search .udca-tab:last-child { grid-column:1 / -1; }
+  .udca-search .udca-icon { width:27px; height:27px; flex-basis:27px; }
+  .udca-search .udca-searchbar { gap:8px; min-height:58px; padding:5px; border-radius:24px; }
+  .udca-search .udca-searchmark { width:40px; height:40px; flex-basis:40px; border-radius:12px; }
+  .udca-search .udca-searchmark svg { width:24px; height:24px; }
+  .udca-search .udca-query { height:44px; font-size:14px; padding:5px 2px; }
+  .udca-search .udca-query::placeholder { font-size:14px; }
+  .udca-search .udca-submit { min-height:39px; padding:8px 10px; font-size:15px; border-radius:10px; }
+  .udca-search .udca-options { display:flex; flex-direction:column; align-items:stretch; gap:12px; margin-top:12px; }
+  .udca-search .udca-radios { gap:9px 15px; }
+  .udca-search .udca-radio { font-size:13px; }
+  .udca-search .udca-radio input { width:19px; height:19px; }
+  .udca-search .udca-advanced { margin:0; align-self:flex-end; }
+  .udca-search .udca-airow { margin-top:13px; font-size:13px; }
+}
+@media (max-width:370px) {
+  .udca-search .udca-searchbar { flex-wrap:wrap; border-radius:17px; }
+  .udca-search .udca-query { flex-basis:calc(100% - 60px); }
+  .udca-search .udca-submit { width:100%; }
+}
+@media (prefers-reduced-motion:reduce) { .udca-search *, .udca-search *:before { transition:none!important; } }
+</style>
+</head>
+<body>
+<!-- Fondo independiente: puede definirse en la página o en el tema de WordPress.
+     Ejemplo CSS para el contenedor padre: background-image:url('URL-DE-LA-FOTO'); background-size:cover; -->
+<div class="udca-search" id="udca-search">
+  <div class="udca-shell">
+    <div class="udca-tabs" role="tablist" aria-label="Servicios de búsqueda" aria-orientation="horizontal">
+      <button class="udca-tab" id="udca-tab-eds" role="tab" aria-selected="true" aria-controls="udca-panel-eds" tabindex="0" data-tab="eds">
+        <span class="udca-icon"><img src="./TODO.png" alt=""></span><span>Todo</span>
+      </button>
+      <button class="udca-tab" id="udca-tab-janium" role="tab" aria-selected="false" aria-controls="udca-panel-janium" tabindex="-1" data-tab="janium">
+        <span class="udca-icon"><img src="./JANIUM.png" alt=""></span><span>Janium</span>
+      </button>
+      <button class="udca-tab" id="udca-tab-ebooks" role="tab" aria-selected="false" aria-controls="udca-panel-ebooks" tabindex="-1" data-tab="ebooks">
+        <span class="udca-icon"><img src="./E-BOOKS.png" alt=""></span><span>E-Books</span>
+      </button>
+      <button class="udca-tab" id="udca-tab-databases" role="tab" aria-selected="false" aria-controls="udca-panel-databases" tabindex="-1" data-tab="databases">
+        <span class="udca-icon"><img src="./BASEDEDATOS.png" alt=""></span><span>Base de datos</span>
+      </button>
+      <button class="udca-tab" id="udca-tab-repository" role="tab" aria-selected="false" aria-controls="udca-panel-repository" tabindex="-1" data-tab="repository">
+        <span class="udca-icon"><img src="./REPOSITORIO.png" alt=""></span><span>Repositorio</span>
+      </button>
+      <button class="udca-tab" id="udca-tab-journals" role="tab" aria-selected="false" aria-controls="udca-panel-journals" tabindex="-1" data-tab="journals">
+        <span class="udca-icon"><img src="./REVISTASUDCA.png" alt=""></span><span>Revistas</span>
+      </button>
+      <button class="udca-tab" id="udca-tab-training" role="tab" aria-selected="false" aria-controls="udca-panel-training" tabindex="-1" data-tab="training">
+        <span class="udca-icon"><img src="./CAPACITACIONES.png" alt=""><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9.5 12 5l9 4.5-9 4.5-9-4.5Z"/><path d="M7 12v4.5c3 2.5 7 2.5 10 0V12M21 10v6"/></svg></span><span>Capacitaciones</span>
+      </button>
+    </div>
+
+    <section class="udca-panelbody" id="udca-panel-eds" role="tabpanel" aria-labelledby="udca-tab-eds">
+      <form data-search="eds">
+        <label for="udca-query-eds" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Buscar en todos los recursos</label>
+        <div class="udca-searchbar">
+          <span class="udca-searchmark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="7.3"/><path d="m16.2 16.2 5 5"/></svg></span>
+          <input class="udca-query" id="udca-query-eds" name="q" type="search" placeholder="Busca libros, artículos, disertaciones y más..." required>
+          <button class="udca-submit" type="submit">Buscar</button>
+        </div>
+        <div class="udca-options">
+          <fieldset class="udca-radios"><legend>Limitar búsqueda</legend>
+            <label class="udca-radio"><input type="radio" name="eds-field" value="keyword" checked> Palabra clave</label>
+            <label class="udca-radio"><input type="radio" name="eds-field" value="title"> Título</label>
+            <label class="udca-radio"><input type="radio" name="eds-field" value="author"> Autor</label>
+          </fieldset>
+          <button class="udca-advanced" type="button" id="udca-advanced">Búsqueda Avanzada</button>
+        </div>
+        <div class="udca-airow" title="Active para hacer búsqueda con pregunta en lenguaje natural">
+          <label class="udca-switch"><input type="checkbox" id="udca-ai"><span class="udca-switchtrack"></span></label>
+          <label for="udca-ai">Búsqueda Asistida por IA</label>
+        </div>
+      </form>
+    </section>
+
+    <section class="udca-panelbody" id="udca-panel-janium" role="tabpanel" aria-labelledby="udca-tab-janium" hidden>
+      <form data-search="janium">
+        <label for="udca-query-janium" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Buscar en el catálogo Janium</label>
+        <div class="udca-searchbar"><span class="udca-searchmark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="7.3"/><path d="m16.2 16.2 5 5"/></svg></span>
+		<input class="udca-query" id="udca-query-janium" type="search" placeholder="Busca en el catálogo bibliográfico" required>
+		<button class="udca-submit" type="submit">Buscar</button></div>
+        <div class="udca-options"><fieldset class="udca-radios"><legend>Tipo de búsqueda</legend>
+          <label class="udca-radio"><input type="radio" name="janium-field" value="keyword" checked> Palabra clave</label>
+          <label class="udca-radio"><input type="radio" name="janium-field" value="title"> Título</label>
+          <label class="udca-radio"><input type="radio" name="janium-field" value="author"> Autor</label>
+        </fieldset></div>
+      </form>
+    </section>
+
+    <section class="udca-panelbody" id="udca-panel-ebooks" role="tabpanel" aria-labelledby="udca-tab-ebooks" hidden>
+      <form data-search="ebooks"><label for="udca-query-ebooks" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Buscar en E-Books</label>
+        <div class="udca-searchbar"><span class="udca-searchmark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="7.3"/><path d="m16.2 16.2 5 5"/></svg></span><input class="udca-query" id="udca-query-ebooks" type="search" placeholder="Busca libros electrónicos…" required><button class="udca-submit" type="submit">Buscar</button></div>
+      </form>
+    </section>
+
+    <section class="udca-panelbody" id="udca-panel-databases" role="tabpanel" aria-labelledby="udca-tab-databases" hidden>
+      <div class="udca-direct"><h2>Bases de datos</h2><p>Accede a las bases de datos y recursos digitales de la biblioteca.</p><button class="udca-submit" type="button" data-open="https://biblioteca.udca.edu.co/recursos-digitales/">Abrir recursos</button></div>
+    </section>
+    <section class="udca-panelbody" id="udca-panel-repository" role="tabpanel" aria-labelledby="udca-tab-repository" hidden>
+      <form data-search="repository"><label for="udca-query-repository" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Buscar en el repositorio</label>
+        <div class="udca-searchbar"><span class="udca-searchmark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="7.3"/><path d="m16.2 16.2 5 5"/></svg></span><input class="udca-query" id="udca-query-repository" type="search" placeholder="Busca en el repositorio institucional…" required><button class="udca-submit" type="submit">Buscar</button></div>
+      </form>
+    </section>
+    <section class="udca-panelbody" id="udca-panel-journals" role="tabpanel" aria-labelledby="udca-tab-journals" hidden>
+      <form data-search="journals"><label for="udca-query-journals" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Buscar en revistas</label>
+        <div class="udca-searchbar"><span class="udca-searchmark" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="7.3"/><path d="m16.2 16.2 5 5"/></svg></span><input class="udca-query" id="udca-query-journals" type="search" placeholder="Busca artículos de revistas científicas…" required><button class="udca-submit" type="submit">Buscar</button></div>
+      </form>
+    </section>
+    <section class="udca-panelbody" id="udca-panel-training" role="tabpanel" aria-labelledby="udca-tab-training" hidden>
+      <div class="udca-direct"><h2>Capacitaciones</h2><p>Consulta actividades de formación y eventos de la biblioteca.</p><button class="udca-submit" type="button" data-open="https://biblioteca.udca.edu.co/capacitaciones-y-eventos/">Ver capacitaciones</button></div>
+    </section>
+  </div>
+</div>
+<script>
+(function () {
+  "use strict";
+  const root = document.getElementById("udca-search");
+  if (!root) return;
+  const tabs = Array.from(root.querySelectorAll('[role="tab"]'));
+  const panels = Array.from(root.querySelectorAll('[role="tabpanel"]'));
+
+  function activateTab(tab, focus) {
+    tabs.forEach((item) => {
+      const active = item === tab;
+      item.setAttribute("aria-selected", String(active));
+      item.tabIndex = active ? 0 : -1;
+    });
+    panels.forEach((panel) => { panel.hidden = panel.id !== "udca-panel-" + tab.dataset.tab; });
+    if (focus) tab.focus();
+  }
+
+  tabs.forEach((tab, index) => {
+    tab.addEventListener("click", () => {
+      activateTab(tab, false);
+      // if (tab.dataset.tab === "databases") window.open("https://biblioteca.udca.edu.co/recursos-digitales/", "_blank", "noopener,noreferrer");
+      // if (tab.dataset.tab === "training") window.open("https://biblioteca.udca.edu.co/capacitaciones-y-eventos/", "_blank", "noopener,noreferrer");
+    });
+	
+    tab.addEventListener("keydown", (event) => {
+      let next = index;
+      if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (index + 1) % tabs.length;
+      else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (index - 1 + tabs.length) % tabs.length;
+      else if (event.key === "Home") next = 0;
+      else if (event.key === "End") next = tabs.length - 1;
+      else return;
+      event.preventDefault(); activateTab(tabs[next], true);
+    });
+  });
+
+  root.querySelector("#udca-advanced").addEventListener("click", () => {
+    window.location.assign("https://research.ebsco.com/c/kfblqp/search/advanced/filters?autocorrect=y");
+  });
+  root.querySelectorAll("[data-open]").forEach((button) => button.addEventListener("click", () => {
+    window.open(button.dataset.open, "_blank", "noopener,noreferrer");
+  }));
+  
+// TODO = EDS Search
+
+  function edsUrl(term, field, ai) {
+    const url = new URL("https://research.ebsco.com/c/kfblqp/search/results");
+    url.searchParams.set("limiters", "FT:Y");
+    let query = term;
+    if (field === "title") query = "TI (" + term + ")";
+    if (field === "author") query = "AU (" + term + ")";
+    url.searchParams.set("q", query);
+    if (field === "author") url.searchParams.set("type", "0");
+    if (ai) url.searchParams.set("searchMode", "enhanced");
+    return url.toString();
+  }
+  
+// E-Books = Publication Finder Search > only eBooks
+  
+  function publicationFinderUrl(term) {
+    const url = new URL("https://publications.ebsco.com/");
+    const params = {alphamenufacet:"",alphamenufacetcount:"0",count:"25",custId:"ns014563",groupId:"main",
+      highlightTag:"mark",includeFacets:"true",offset:"1",orderBy:"relevance",profileId:"pfui",
+      resourceTypeOptionSelected:"8,9,14",search:term,searchField:"titlename",searchtype:"contains",
+      subjectFacetSchemaFilter:"tli"};
+    Object.entries(params).forEach(([key,value]) => url.searchParams.set(key,value));
+    return url.toString();
+  }
+  root.querySelectorAll("form[data-search]").forEach((form) => form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const service = form.dataset.search;
+    const input = form.querySelector('input[type="search"]');
+    const term = input.value.trim();
+    if (!term) { input.focus(); return; }
+    let destination;
+	
+// EDS Search
+
+    if (service === "eds") {
+      destination = edsUrl(term, form.querySelector('input[name="eds-field"]:checked').value, root.querySelector("#udca-ai").checked);
+    } else if (service === "ebooks") {
+      destination = publicationFinderUrl(term);
+    } 
+	
+// Repositorio Search
+
+	else if (service === "repository") {
+      const url = new URL("https://repository.udca.edu.co/search");
+      url.searchParams.set("query", term); destination = url.toString();
+    } 
+
+// Revistas Search
+	
+	else if (service === "journals") {
+      const search = new URL("https://revistas.udca.edu.co/index.php/index/search/search");
+      search.searchParams.set("query", term);
+      search.searchParams.set("searchJournal", ""); search.searchParams.set("authors", ""); search.searchParams.set("title", "");
+      const login = new URL("https://udca.elogim.com:2443/login");
+      login.searchParams.set("url", search.toString()); destination = login.toString();
+	} 
+	
+// Janium Search
+
+	else if (service === "janium") {
+
+    const field = form.querySelector(
+      'input[name="janium-field"]:checked'
+    ).value;
+
+    let janiumField;
+
+    switch (field) {
+      case "author":
+        janiumField = "autor";
+        break;
+
+      case "title":
+        janiumField = "titulo";
+        break;
+
+      default:
+        janiumField = "keyword";
+    }
+
+		destination =
+		"https://udca.janium.net/janium-bin/janium_login_opac.pl?scan&formato=&" +
+		janiumField +
+		"=" +
+		encodeURIComponent(term);
+	}
+	
+    if (destination) {
+		// alert (destination)
+		window.open(destination, "_blank", "noopener,noreferrer");
+		}
+  
+  }));
+
+})();
+</script>
+</body>
+</html>
