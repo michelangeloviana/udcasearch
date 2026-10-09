@@ -281,7 +281,7 @@ background-attachment: fixed;
   function publicationFinderUrl(term) {
     const url = new URL("https://publications.ebsco.com/");
     const params = {alphamenufacet:"",alphamenufacetcount:"0",count:"25",custId:"ns014563",groupId:"main",
-      highlightTag:"mark",includeFacets:"true",offset:"1",orderBy:"relevance",profileId:"pfui",
+      highlightTag:"mark",includeFacets:"true",offset:"1",orderBy:"relevance",language:"es",profileId:"pfui",
       resourceTypeOptionSelected:"8,9,14",search:term,searchField:"titlename",searchtype:"contains",
       subjectFacetSchemaFilter:"tli"};
     Object.entries(params).forEach(([key,value]) => url.searchParams.set(key,value));
